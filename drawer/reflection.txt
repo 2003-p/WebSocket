@@ -1,0 +1,79 @@
+
+create table to_reflect (
+to_reflect_id int primary key auto_increment,
+exercise_id int,
+edit_event_id int,
+student_id varchar(32)
+);
+
+create table target_part (
+target_part_id int primary key auto_increment,
+part_type text,
+other text
+);
+
+create table modification_event (
+reflection_id int,
+edit_event_id int
+);
+
+
+
+create table reflection (
+reflection_id int primary key auto_increment,
+student_id varchar(32),
+exercise_id int,
+occurrence_point_id int,
+occurrence_reason text,
+target_part text,
+imaged_situation text,
+is_there_problem bool,
+discovered_problem text,
+entry_datetime datetime
+);
+
+create table check_item(
+check_item_id int primary key auto_increment,
+check_item text
+);
+
+create table reflection_check_item(
+reflection_id int,
+check_item_id int
+);
+
+create table occurrence_reason(
+reason_id int primary key auto_increment,
+reason text
+);
+
+
+create table reflection_reason(
+reflection_id int,
+occurrence_reason_id int
+);
+
+insert into occurrence_reason (occurrence_reason) value('編集していた部分が一通りできた');
+insert into occurrence_reason (occurrence_reason) value('実体と属性の抽出が一通りできた');
+insert into occurrence_reason (occurrence_reason) value('関連と多重度の定義が一通りできた');
+insert into occurrence_reason (occurrence_reason) value('間違いがありそうだと思った（理由も含めて）');
+insert into occurrence_reason (occurrence_reason) value('その他');
+
+update occurrence_reason set occurrence_reason='実体の抽出が終了した' where occurrence_reason_id=2;
+update occurrence_reason set occurrence_reason='ひとつの実体が完成した' where occurrence_reason_id=3;
+update occurrence_reason set occurrence_reason='全部の実体が完成した' where occurrence_reason_id=4;
+update occurrence_reason set occurrence_reason='関連の抽出が終了した' where occurrence_reason_id=5;
+update occurrence_reason set occurrence_reason='多重度の設定が一箇所終了した' where occurrence_reason_id=6;
+
+insert into occurrence_reason (occurrence_reason) value('全部の関連が完成した');
+insert into occurrence_reason (occurrence_reason) value('提出前の最終確認');
+insert into occurrence_reason (occurrence_reason) value('その他');
+
+insert into check_item (check_item) value('属性は基本データになっているか？');
+insert into check_item (check_item) value('実体固有の属性以外が混入していないか？');
+insert into check_item (check_item) value('属性と属性値を混同していないか？');
+insert into check_item (check_item) value('関連実体が持つべき属性を実体に持たせていないか？');
+insert into check_item (check_item) value('関連の基数はビジネスルールに従っているか？');
+insert into check_item (check_item) value('関連の実体化が必要ではないか？');
+
+

@@ -1,0 +1,7 @@
+UMLArtifactIdの一意性の担保
+　　20150529　EditEventのListを取ってくる系メソッドで、UMLArtifactIdは必要か？
+Removeイベントの収集タイミング、RmoveArtifactsイベント収集の実装
+Editの結果Nullになった削除された場合のイベント収集の実装
+完成、提出の扱いをするイベント実装
+関連のデフォルト値を「cardinalityやdefault」等にする
+ユーザに通し番号（デモとか用）を追加

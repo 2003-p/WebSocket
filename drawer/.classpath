@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="con" path="com.google.cloud.tools.eclipse.appengine.libraries/master-container">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/datanucleus-appengine-1.0.10.final.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/datanucleus-core-1.1.5.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/datanucleus-jpa-1.1.5.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/geronimo-jpa_3.0_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/geronimo-jta_1.1_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-canvas-0.4.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/tatami-r465-rip.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jdo2-api-2.3-eb.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jsr107cache-1.1.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-log-3.1.8.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-visualization.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-incubator-2.2.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/lucene-suggest-5.5.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/lucene-analyzers-common-5.5.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/lucene-analyzers-kuromoji-5.5.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/lucene-core-5.5.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/appengine-api-1.0-sdk-1.9.19.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/Java8">
+		<attributes>
+			<attribute name="module" value="true"/>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/api/war/WEB-INF/lib/gwt-umlapi.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/jeromq-0.5.2.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-dnd-3.2.3.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-servlet.jar"/>
+	<classpathentry kind="lib" path="C:/gwt-2.8.2-custom/gwt-dev.jar"/>
+	<classpathentry kind="con" path="war/WEB-INF/lib/mariadb-java-client-3.4.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-api-1.7.36.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-simple-1.7.36.jar"/>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/drawer/war/WEB-INF/lib/poi-4.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/drawer/war/WEB-INF/lib/poi-ooxml-4.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/drawer/war/WEB-INF/lib/poi-ooxml-schemas-4.1.2.jar"/>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/drawer/war/WEB-INF/lib/xmlbeans-3.1.0.jar"/>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/drawer/war/WEB-INF/lib/commons-compress-1.19.jar"/>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/drawer/war/WEB-INF/lib/curvesapi-1.06.jar"/>
+	<classpathentry kind="lib" path="C:/pleiades/2025-03/workspace/kifu/drawer/war/WEB-INF/lib/commons-collections4-4.5.0-M2.jar"/>
+	<classpathentry kind="con" path="com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="output" path="war/WEB-INF/classes"/>
+</classpath>

@@ -1,0 +1,22 @@
+create table exercise (
+exercise_id int primary key auto_increment,
+type text,
+title text,
+task text,
+entry_datetime datetime,
+is_removed int);
+
+create table answer(
+answer_id int primary key auto_increment,
+exercise_id int,
+student_id varchar(64),
+canvas_url text,
+entry_datetime datetime);
+
+create table comment(
+comment_id int primary key auto_increment,
+student_id varchar(64),
+edit_event_id int,
+exercise_id int,
+comment text,
+entry_datetime datetime);

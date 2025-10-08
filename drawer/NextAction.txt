@@ -1,0 +1,5 @@
+2014/11/30
+PlaceArtifactsのイベント
+　再現時はtoURLがNULLでないものだけをひろう。
+　分析時はbeforeとafterがNULLのイベントをはじいて分析する。
+それ用のDAOを作る

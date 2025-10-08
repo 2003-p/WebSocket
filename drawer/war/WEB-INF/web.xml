@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/j2ee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+    version="2.4">
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>GWTUMLDrawer.html</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>remoteLoggingServiceImpl</servlet-name>
+		<servlet-class>com.google.gwt.libideas.logging.server.RemoteLoggingServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>remoteLoggingServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/logging</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>MyLoggerServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umlapi.server.MyLoggerServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MyLoggerServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/registEditEvent</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>LogViewerServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.LogViewerServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LogViewerServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getLog</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>LogViewerServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getEditEventList</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>LogViewerServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getAllEditEventList</url-pattern>
+	</servlet-mapping>
+
+		<servlet-mapping>
+		<servlet-name>LogViewerServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getEditEventListForReplay</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>CanvasServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.CanvasServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>CanvasServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/saveCanvas</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>CanvasServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/loadCanvas</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>CanvasServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/undo</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>CanvasServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/saveCanvasAsAnswer</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>CanvasServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getAnswer</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>LoginServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.LoginServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>LoginServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/login</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>GetUserServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.GetUserServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetUserServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getUserList</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>GetUserServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getUserListForReplay</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>SetDifficultyServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.SetDifficultyServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SetDifficultyServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/setDifficulty</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UserServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.UserServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>UserServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/addUser</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/changePassword</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/setAdmin</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UserServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/initializePassword</url-pattern>
+	</servlet-mapping>
+	<servlet>
+		<servlet-name>SessionServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.SessionServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SessionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getSessionAttribute</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>SessionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/setSessionAttribute</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>AnalysisServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.AnalysisServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>AnalysisServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/analyze</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ExerciseServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.ExerciseServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ExerciseServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/addExercise</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ExerciseServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getExerciseList</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ExerciseServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getExercise</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ExerciseServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/setExerciseRemoved</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>CommentServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.CommentServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>CommentServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/addComment</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>CommentServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getCommentList</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.ReflectionServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/addReflection</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/removeReflection</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getReflectionList</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getAllOccurrenceReasonList</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getAllCheckItemList</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/registerReflectionEventAndReflection</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>ReflectionServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/updateCheckItem</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+    	<servlet-name>PatternServiceImpl</servlet-name>
+    	<servlet-class>com.objetdirect.gwt.umldrawer.server.PatternServiceImpl</servlet-class>
+	</servlet>
+
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/getPatternNameList</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/getPatternSpotList</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/getUMLClassDiagramList</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/getUMLAnswerList</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/getCombineUrl</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/getCombineUrl2</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/getPatternList</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PatternServiceImpl</servlet-name>
+        <url-pattern>/gwtumldrawer/savePatternList</url-pattern>
+    </servlet-mapping>
+
+	<!-- 以下　山崎追加部分 -->
+	<!-- 差分の検知 -->
+	<servlet>
+		<servlet-name>DiffServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.yamazaki.diff.DiffServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>DiffServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/diff</url-pattern>
+	</servlet-mapping>
+
+	<!-- ソースコードからの通知 -->
+	<servlet>
+		<servlet-name>SourceCodeChangeStateServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.yamazaki.impl.SourceCodeChangeStateServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SourceCodeChangeStateServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/changecode</url-pattern>
+	</servlet-mapping>
+
+	<!-- レコード -->
+	<servlet>
+		<servlet-name>RecordCheckBoxStateServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.yamazaki.diff.RecordCheckBoxStateServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>RecordCheckBoxStateServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/record</url-pattern>
+	</servlet-mapping>
+	
+	<!-- 以下　齊藤追加部分 -->
+	<servlet>
+		<servlet-name>SimServiceImpl</servlet-name>
+		<servlet-class>com.objetdirect.gwt.umldrawer.server.saito.SimServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SimServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/urlToCompare</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>SimServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/removeRelation</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>SimServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/addColor</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>SimServiceImpl</servlet-name>
+		<url-pattern>/gwtumldrawer/getSim</url-pattern>
+	</servlet-mapping>
+	
+</web-app>

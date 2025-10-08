@@ -1,0 +1,35 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<module rename-to = 'kifu'>
+
+   <!-- inherit the core web toolkit stuff.                        -->
+   <inherits name = 'com.zaxxer.hikari.HikariDataSource'/>
+
+   <!-- inherit the default gwt style sheet.                       -->
+   <inherits name = 'com.zaxxer.hikari.HikariConfig'/>
+   
+   <!-- inherit the core web toolkit stuff.                        -->
+   <inherits name = 'com.google.gwt.user.user'/>
+
+   <!-- inherit the default gwt style sheet.                       -->
+   <inherits name = 'com.google.gwt.user.theme.clean.Clean'/>
+
+   <!-- specify the app entry point class.                         -->
+   <entry-point class = 'com.tutorialspoint.client.HelloWorld'/>
+
+   <!-- specify the paths for translatable code                    -->
+   <source path = '...'/>
+   <source path = '...'/>
+
+   <!-- specify the paths for static files like html, css etc.     -->
+   <public path = '...'/>
+   <public path = '...'/>
+
+   <!-- specify the paths for external javascript files            -->
+   <script src = "js-url" />
+   <script src = "js-url" />
+
+   <!-- specify the paths for external style sheet files            -->
+   <stylesheet  src = "css-url" />
+   <stylesheet  src = "css-url" />
+
+</module>

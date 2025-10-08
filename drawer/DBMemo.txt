@@ -1,0 +1,24 @@
+create database gwtumldrawer;
+
+create table operation_log(
+user_id int primary key auto_increment,
+date timestamp,
+operation_log text);
+
+
+
+
+
+
+datetime型をtimestampに変換
+
+「UNIX_TIMESTAMP｣関数を使います。
+ 
+
+select unix_timestamp(test_date) as test from sample;
+timestampをdatetime型に変換
+
+「FROM_UNIXTIME」関数を使います。
+ 
+
+select from_unixtime(test_date) as test from sample;
