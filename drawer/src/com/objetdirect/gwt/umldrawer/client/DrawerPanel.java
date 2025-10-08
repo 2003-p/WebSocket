@@ -1,17 +1,3 @@
-/*
- * This file is part of the GWTUML project and was written by Mounier Florian <mounier-dot-florian.at.gmail'dot'com> for Objet Direct
- * <http://wwww.objetdirect.com>
- *
- * Copyright © 2009 Objet Direct Contact: gwtuml@googlegroups.com
- *
- * GWTUML is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software
- * Foundation, either version 3 of the License, or (at your option) any later version.
- *
- * GWTUML is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
- * PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License along with GWTUML. If not, see <http://www.gnu.org/licenses/>.
- */
 package com.objetdirect.gwt.umldrawer.client;
 
 import java.util.HashMap;
@@ -29,7 +15,6 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.AbsolutePanel;
 import com.google.gwt.user.client.ui.FocusPanel;
@@ -52,80 +37,79 @@ import com.objetdirect.gwt.umlapi.client.helpers.UMLCanvas;
 import com.objetdirect.gwt.umlapi.client.umlcomponents.UMLDiagram;
 import com.objetdirect.gwt.umlapi.client.umlcomponents.UMLDiagram.Type;
 
-/**
- * This panel is an intermediate panel that contains the graphic canvas <br>
- * And can draw a shadow around it
- *
- * @author Florian Mounier (mounier-dot-florian.at.gmail'dot'com)
- */
-
-
 public class DrawerPanel extends AbsolutePanel {
-	
 
-	private SimplePanel								bottomLeftCornerShadow;
+	private SimplePanel bottomLeftCornerShadow;
+	private SimplePanel bottomRightCornerShadow;
+	private SimplePanel bottomShadow;
+	private UMLCanvas uMLCanvas; // finalを外す！
+	private int height;
+	private SimplePanel rightShadow;
+	private SimplePanel topRightCornerShadow;
+	private int width;
 
-	private SimplePanel								bottomRightCornerShadow;
+	// --- ここからが改造箇所だ！ ---
+	private DrawerBase drawerBase; // drawerBaseをしまっておく宝箱
+	// --- 改造箇所ここまで ---
 
-	private SimplePanel								bottomShadow;
-	private final UMLCanvas						uMLCanvas;
-	private DrawerBase drawerBase;
+	FocusPanel topLeft = new FocusPanel();
+	FocusPanel top = new FocusPanel();
+	FocusPanel topRight = new FocusPanel();
+	FocusPanel right = new FocusPanel();
+	FocusPanel bottomRight = new FocusPanel();
+	FocusPanel bottom = new FocusPanel();
+	FocusPanel bottomLeft = new FocusPanel();
+	FocusPanel left = new FocusPanel();
 
-	private int									height;
-	private SimplePanel								rightShadow;
-	private SimplePanel								topRightCornerShadow;
-	private int									width;
+	private final HashMap<FocusPanel, Direction> directionPanels = new HashMap<FocusPanel, Direction>() {
+		{
+			this.put(DrawerPanel.this.topLeft, Direction.UP_LEFT);
+			this.put(DrawerPanel.this.top, Direction.UP);
+			this.put(DrawerPanel.this.topRight, Direction.UP_RIGHT);
+			this.put(DrawerPanel.this.right, Direction.RIGHT);
+			this.put(DrawerPanel.this.bottomRight, Direction.DOWN_RIGHT);
+			this.put(DrawerPanel.this.bottom, Direction.DOWN);
+			this.put(DrawerPanel.this.bottomLeft, Direction.DOWN_LEFT);
+			this.put(DrawerPanel.this.left, Direction.LEFT);
+		}
+	};
 
-	FocusPanel										topLeft			= new FocusPanel();
-	FocusPanel										top				= new FocusPanel();
-	FocusPanel										topRight		= new FocusPanel();
-	FocusPanel										right			= new FocusPanel();
-	FocusPanel										bottomRight		= new FocusPanel();
-	FocusPanel										bottom			= new FocusPanel();
-	FocusPanel										bottomLeft		= new FocusPanel();
-	FocusPanel										left			= new FocusPanel();
+	private ResizeHandler resizeHandler; // finalを外す！
 
-	//private VerticalPanel								basePanel      	= new VerticalPanel();
+	// --- ここからが改造箇所だ！ ---
 
-	private final HashMap<FocusPanel, Direction>	directionPanels	= new HashMap<FocusPanel, Direction>() {
-																		{
-																			this.put(DrawerPanel.this.topLeft, Direction.UP_LEFT);
-																			this.put(DrawerPanel.this.top, Direction.UP);
-																			this.put(DrawerPanel.this.topRight, Direction.UP_RIGHT);
-																			this.put(DrawerPanel.this.right, Direction.RIGHT);
-																			this.put(DrawerPanel.this.bottomRight, Direction.DOWN_RIGHT);
-																			this.put(DrawerPanel.this.bottom, Direction.DOWN);
-																			this.put(DrawerPanel.this.bottomLeft, Direction.DOWN_LEFT);
-																			this.put(DrawerPanel.this.left, Direction.LEFT);
-																		}
-																	};
-
-	private final ResizeHandler					resizeHandler;
 	/**
 	 * Default constructor of a DrawerPanel
-	 *
+	 * NewViewer.java が必要とする、引数なしの設計図だ！
 	 */
-	public DrawerPanel(DrawerBase drawerBase){
-	    this(350, 10); // 既存のコンストラクタを呼び出す
-	    this.drawerBase = drawerBase;
-	}
 	public DrawerPanel() {
-		this(350, 10);
+		super();
+		init(350, 10, null);
 	}
 
-	public DrawerBase getDrawerBase() {
-	    return this.drawerBase;
-	}
-	
-	public Timer countTimer;
-    private long lastCalledTime = 0;
-	
-    private double lastTimeSim = 0;
-    private double thisTimeSim;
-    
-	public DrawerPanel(final int widthDiffBetweenWindow, final int heightDiffBetweenWindow) {
-		
+	/**
+	 * DrawerBase.java が必要とする、DrawerBaseを受け取る設計図だ！
+	 */
+	public DrawerPanel(DrawerBase drawerBase) {
 		super();
+		init(350, 10, drawerBase);
+	}
+
+	/**
+	 * 古いコードが使っていた、数字だけを受け取る設計図だ！
+	 */
+	public DrawerPanel(final int widthDiffBetweenWindow, final int heightDiffBetweenWindow) {
+		super();
+		init(widthDiffBetweenWindow, heightDiffBetweenWindow, null);
+	}
+
+	/**
+	 * 全ての部品を組み立てる、メインの初期化メソッドだ！
+	 */
+	private void init(final int widthDiffBetweenWindow, final int heightDiffBetweenWindow, final DrawerBase drawerBase) {
+	// --- 改造箇所ここまで ---
+		this.drawerBase = drawerBase;
+
 		ThemeManager.setCurrentTheme((Theme.getThemeFromIndex(OptionsManager.get("Theme"))));
 		GfxManager.setPlatform(OptionsManager.get("GraphicEngine"));
 		GeometryManager.setPlatform(OptionsManager.get("GeometryStyle"));
@@ -133,28 +117,22 @@ public class DrawerPanel extends AbsolutePanel {
 			this.width = OptionsManager.get("Width");
 			this.height = OptionsManager.get("Height");
 		} else {
-			//TODO window size
-			this.width = (int)(Window.getClientWidth())-widthDiffBetweenWindow;
-			this.height = (int)(Window.getClientHeight())-heightDiffBetweenWindow;
+			this.width = (int) (Window.getClientWidth()) - widthDiffBetweenWindow;
+			this.height = (int) (Window.getClientHeight()) - heightDiffBetweenWindow;
 		}
 
 		final boolean isShadowed = OptionsManager.get("Shadowed") == 1;
 		Logger.getGlobal().info("Creating drawer");
 
-			//TODO
-		this.uMLCanvas = new UMLCanvas(new UMLDiagram(UMLDiagram.Type.getUMLDiagramFromIndex(OptionsManager.get("DiagramType"))),
-				this.width, this.height);
-		//TODO
+		this.uMLCanvas = new UMLCanvas(new UMLDiagram(UMLDiagram.Type.getUMLDiagramFromIndex(OptionsManager.get("DiagramType"))), this.width,
+				this.height);
 
 		this.add(this.uMLCanvas);
-
 
 		final int directionPanelSizes = OptionsManager.get("DirectionPanelSizes");
 
 		final HashMap<FocusPanel, Point> panelsSizes = this.makeDirectionPanelsSizes(directionPanelSizes);
 		final HashMap<FocusPanel, Point> panelsPositions = this.makeDirectionPanelsPositions(directionPanelSizes);
-		
-		
 
 		for (final Entry<FocusPanel, Direction> panelEntry : this.directionPanels.entrySet()) {
 			final FocusPanel panel = panelEntry.getKey();
@@ -165,7 +143,8 @@ public class DrawerPanel extends AbsolutePanel {
 				@Override
 				public void onMouseDown(final MouseDownEvent event) {
 
-					for (double d = ((double) OptionsManager.get("DirectionPanelOpacity")) / 100; d <= ((double) OptionsManager.get("DirectionPanelMaxOpacity")) / 100; d += 0.05) {
+					for (double d = ((double) OptionsManager.get("DirectionPanelOpacity")) / 100; d <= ((double) OptionsManager
+							.get("DirectionPanelMaxOpacity")) / 100; d += 0.05) {
 						final double opacity = Math.ceil(d * 100) / 100;
 
 						new Scheduler.Task("Opacifying") {
@@ -221,9 +200,6 @@ public class DrawerPanel extends AbsolutePanel {
 			panel.addMouseUpHandler(new MouseUpHandler() {
 				@Override
 				public void onMouseUp(final MouseUpEvent event) {
-					//					DOM.setStyleAttribute(panel.getElement(), "backgroundColor", ThemeManager.getTheme().getDirectionPanelColor().toString());
-					//					DrawerPanel.this.uMLCanvas.moveAll(direction.withSpeed(Math.min(DrawerPanel.this.uMLCanvas.getOffsetHeight(), DrawerPanel.this.uMLCanvas
-					//							.getOffsetWidth())), false);
 					Scheduler.cancel("Opacifying");
 					Scheduler.cancel("MovingAllArtifacts");
 					Scheduler.cancel("MovingAllArtifactsRecursive");
@@ -252,8 +228,8 @@ public class DrawerPanel extends AbsolutePanel {
 			panel.addMouseMoveHandler(new MouseMoveHandler() {
 				@Override
 				public void onMouseMove(final MouseMoveEvent event) {
-					Mouse.move(new Point(event.getClientX(), event.getClientY()), event.getNativeButton(), event.isControlKeyDown(), event.isAltKeyDown(),
-							event.isShiftKeyDown(), event.isMetaKeyDown());
+					Mouse.move(new Point(event.getClientX(), event.getClientY()), event.getNativeButton(), event.isControlKeyDown(), event
+							.isAltKeyDown(), event.isShiftKeyDown(), event.isMetaKeyDown());
 				}
 			});
 			final Point panelPosition = panelsPositions.get(panel);
@@ -274,7 +250,6 @@ public class DrawerPanel extends AbsolutePanel {
 		this.resizeHandler = new ResizeHandler() {
 			public void onResize(final ResizeEvent resizeEvent) {
 				if (OptionsManager.get("AutoResolution") == 1) {
-					// DOM.setStyleAttribute(Log.getDivLogger().getWidget().getElement(), "display", "none");
 					DrawerPanel.this.width = (int) (resizeEvent.getWidth() - widthDiffBetweenWindow);
 					DrawerPanel.this.height = (int) (resizeEvent.getHeight() - heightDiffBetweenWindow);
 					DrawerPanel.this.setPixelSize(DrawerPanel.this.width, DrawerPanel.this.height);
@@ -298,18 +273,6 @@ public class DrawerPanel extends AbsolutePanel {
 
 		};
 		Window.addResizeHandler(this.resizeHandler);
-
-		/***************************************************************************************************************************/
-
-
-
-		/***************************************************************************************************************************/
-
-
-
-		// TODO : under chrome redraw doesn't work if the canvas is at a
-		// different point than (0,0) tatami ? dojo ? chrome ?
-		// example : this.setSpacing(50);
 		Logger.getGlobal().info("Setting active canvas");
 		Session.setActiveCanvas(this.uMLCanvas);
 		Logger.getGlobal().info("Disabling browser events");
@@ -317,9 +280,17 @@ public class DrawerPanel extends AbsolutePanel {
 		Logger.getGlobal().info("Init end");
 	}
 
+	// --- ここからが改造箇所だ！ ---
+	/**
+	 * WebSocketClientがDrawerBaseにたどり着くための"橋"だ！
+	 */
+	public DrawerBase getDrawerBaseInstance() {
+		return this.drawerBase;
+	}
+	// --- 改造箇所ここまで ---
+
 	/**
 	 * Getter for the height
-	 *
 	 * @return the height
 	 */
 	public final int getHeight() {
@@ -328,19 +299,14 @@ public class DrawerPanel extends AbsolutePanel {
 
 	/**
 	 * Getter for the uMLCanvas
-	 *
 	 * @return the uMLCanvas
 	 */
 	public final UMLCanvas getUMLCanvas() {
 		return this.uMLCanvas;
 	}
-	public DrawerBase getDrawerBaseInstance() {
-	    return this.drawerBase;
-	}
 
 	/**
 	 * Getter for the width
-	 *
 	 * @return the width
 	 */
 	public final int getWidth() {
@@ -349,9 +315,7 @@ public class DrawerPanel extends AbsolutePanel {
 
 	/**
 	 * Setter for the height
-	 *
 	 * @param height
-	 *            the height to set
 	 */
 	public final void setHeight(final int height) {
 		this.height = height;
@@ -359,9 +323,7 @@ public class DrawerPanel extends AbsolutePanel {
 
 	/**
 	 * Setter for the width
-	 *
 	 * @param width
-	 *            the width to set
 	 */
 	public final void setWidth(final int width) {
 		this.width = width;
@@ -396,7 +358,6 @@ public class DrawerPanel extends AbsolutePanel {
 
 	void makeShadow() {
 		final int shadowSize = 8;
-
 		this.setWidth(this.width + shadowSize + this.getAbsoluteLeft() + "px");
 		this.setHeight(this.height + shadowSize + this.getAbsoluteTop() + "px");
 
@@ -426,16 +387,9 @@ public class DrawerPanel extends AbsolutePanel {
 		this.add(this.bottomLeftCornerShadow, 0, this.height);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.google.gwt.user.client.ui.Widget#onAttach()
-	 */
 	@Override
 	protected void onAttach() {
-		// TODO Auto-generated method stub
 		super.onAttach();
-
 	}
 
 	private HashMap<FocusPanel, Point> makeDirectionPanelsPositions(final int directionPanelSizes) {
@@ -445,8 +399,7 @@ public class DrawerPanel extends AbsolutePanel {
 				this.put(DrawerPanel.this.top, new Point(directionPanelSizes, 0));
 				this.put(DrawerPanel.this.topRight, new Point(DrawerPanel.this.getWidth() - directionPanelSizes, 0));
 				this.put(DrawerPanel.this.right, new Point(DrawerPanel.this.getWidth() - directionPanelSizes, directionPanelSizes));
-				this.put(DrawerPanel.this.bottomRight, new Point(DrawerPanel.this.getWidth() - directionPanelSizes, DrawerPanel.this.getHeight()
-						- directionPanelSizes));
+				this.put(DrawerPanel.this.bottomRight, new Point(DrawerPanel.this.getWidth() - directionPanelSizes, DrawerPanel.this.getHeight() - directionPanelSizes));
 				this.put(DrawerPanel.this.bottom, new Point(directionPanelSizes, DrawerPanel.this.getHeight() - directionPanelSizes));
 				this.put(DrawerPanel.this.bottomLeft, new Point(0, DrawerPanel.this.getHeight() - directionPanelSizes));
 				this.put(DrawerPanel.this.left, new Point(0, directionPanelSizes));
@@ -473,7 +426,7 @@ public class DrawerPanel extends AbsolutePanel {
 		this.uMLCanvas.clearCanvas();
 	}
 
-	public void fromURL(String url, boolean  isForPasting) {
+	public void fromURL(String url, boolean isForPasting) {
 		this.uMLCanvas.fromURL(url, isForPasting);
 	}
 }
