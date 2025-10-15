@@ -48,6 +48,12 @@ public class WebSocketClient {
             console.error("WebSocket is not connected.");
         }
     }-*/;
+    public native void disconnect() /*-{
+        if (this.@com.objetdirect.gwt.umldrawer.client.helpers.WebSocketClient::ws) {
+            this.@com.objetdirect.gwt.umldrawer.client.helpers.WebSocketClient::ws.close();
+            this.@com.objetdirect.gwt.umldrawer.client.helpers.WebSocketClient::ws = null;
+        }
+    }-*/;
  // WebSocketClient.java の onMessage メソッドをこれに置き換える
 
     public void onMessage(String message) {

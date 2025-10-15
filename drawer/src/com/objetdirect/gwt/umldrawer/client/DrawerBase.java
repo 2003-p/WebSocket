@@ -51,10 +51,10 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 	private VerticalPanel rightSideBar;
 	private HorizontalPanel northBar;
 	private HorizontalPanel southBar;
-	
+
 	private UMLCanvas uMLCanvas;
 	private DrawerPanel drawerPanel;
-	
+
 	private WebSocketClient webSocketClient;
 	private Timer syncTimer;
 	private String lastCanvasUrl = "";
@@ -89,18 +89,18 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 	private final String NOTHAS = "欠損";
 	private Button diff_button_;
 	private final CatchSourceCodeChengeState chathcodestate_;
-	
+
 	//	add Saito
 	private final String MATCH = "一致";
 	private final String MISMATCH = "不一致";
-	
+
 	public static Timer countTimer;
     private long lastCalledTime = 0;
-    
+
     private final double diffSim = 0.05;
     private double lastTimeSim = 0;
     private double thisTimeSim;
-    
+
 	public DrawerBase() {
 		super();
 
@@ -449,7 +449,7 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
         */
 
         //合成箇所選択ボタン(PopupPanelで実装)
-  /*      Button spotSelect = new Button(DrawerTextResource.SELECT_SPOT.getMessage());
+  /* Button spotSelect = new Button(DrawerTextResource.SELECT_SPOT.getMessage());
         spotSelect.setSize("95px", "44px");
         spotSelect.addClickHandler(new ClickHandler() {
 
@@ -652,14 +652,14 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		
 //add saito***************************************************************
 
-		//実験群用  
+		//実験群用
 		Button layout = new Button(DrawerTextResource.LAYOUT_CHANGE.getMessage());
         layout.setSize("95px", "48px");
         layout.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
             	 lastCalledTime = System.currentTimeMillis();
-            	 
+
             	layoutChange();
             	//DBにデータが反映される前に座標を読み込まないように1秒待つ
             	Timer timer = new Timer() {
@@ -676,14 +676,14 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
                         timer.schedule(1000);
                     }
                 };
-                
+
                 timer.schedule(1000);
             }
         });
         leftSideBar.add(layout);
-        
+
         //saito  統制群用
-        
+
 //		Button simColor = new Button(DrawerTextResource.COLOR_CHANGE.getMessage());
 //        simColor.setSize("95px", "48px");
 //        simColor.addClickHandler(new ClickHandler() {
@@ -699,15 +699,15 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 //                    	Timer timer = new Timer() {
 //                            @Override
 //                            public void run() {
-//                            
+//
 //                            	colorChange();
-//                           
+//
 //                            }
 //                        };
 //                        timer.schedule(1000);
 //                    }
 //                };
-//                
+//
 //                timer.schedule(1000);
 //            }
 //        });
@@ -715,15 +715,15 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 
       //saito 2024 6月修士実験用
      if(Session.exerciseId == 21) {
-    	 
+
     	 countTimer = new Timer() {
              @Override
              public void run() {
              	 if (System.currentTimeMillis() - lastCalledTime > 60000) {
              		 getSim();
-             		 
+
                   	if(simCheck()) {
-                  		
+
                   	}else {
                   		Window.alert("チェックを開始します");
                   		//以下layoutボタンと同じ処理
@@ -741,20 +741,20 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
                                    timer.schedule(1000);
                                }
                            };
-                           
+
                            timer.schedule(1000);
                   	}
                   	lastTimeSim=thisTimeSim;
              		lastCalledTime = System.currentTimeMillis();
-             		
+
              	 }
              }
          };
          countTimer.scheduleRepeating(5000);
      }
-        
 
-        
+
+
         //**************************************************************************************************
 
 		//教授者用
@@ -825,13 +825,12 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		this.drawerPanel = new DrawerPanel(this);
 		mainPanel.add(this.drawerPanel);
 
-		// WebSocketの初期化と接続
-		// URLの "war" の部分は、おまえがTomcatにデプロイするときの
-		// アプリケーション名（コンテキストパス）に合わせてくれ！
-		String webSocketURL = "ws://192.168.18.171:8080/KIfU4/diagram";
-		this.webSocketClient = new WebSocketClient(this.drawerPanel);
-		this.webSocketClient.connect(webSocketURL);
-		// onModuleLoad() の中に、このブロックを追加
+		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+		// ★★★ ここからが修正箇所だぞ！ ★★★
+		// ★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★★
+
+		// 演習IDを使ってWebSocketに接続するメソッドを呼び出す！
+		connectToExerciseChannel(String.valueOf(Session.exerciseId));
 
 		// 監視タイマーをセットアップするぞ！
 		this.syncTimer = new Timer() {
@@ -844,7 +843,9 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		            if (!currentUrl.equals(lastCanvasUrl)) {
 		                // 変化があったら、その情報を"荷物"として全員に送る！
 		                String message = "{\"action\":\"sync\", \"url\":\"" + currentUrl + "\"}";
-		                webSocketClient.send(message);
+		                if(webSocketClient != null){
+		                	webSocketClient.send(message);
+		                }
 		                // 今の状態を記憶しておく
 		                lastCanvasUrl = currentUrl;
 		            }
@@ -876,10 +877,38 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		editEventPanel = new EditEventPanel(DrawerSession.student.getStudentId(),Session.exerciseId); //student_id, exercise_id
 
 		CanvasInit();
-		
-		
-		
+
+	} // ★★★★★★★★★ コンストラクタはここで終わりだぞ！ ★★★★★★★★★
+
+
+	// ★★★★★★★★★ ここにメソッドを移動させたぞ！ ★★★★★★★★★
+	/**
+	 * 指定された演習IDの"秘境"（WebSocketチャンネル）に接続するための、新しい呪文だ！
+	 * @param exerciseId 接続したい演習のID
+	 */
+	public void connectToExerciseChannel(String exerciseId) {
+	    // もし既に別の演習に接続していたら、一度退出する
+	    if (this.webSocketClient != null) {
+	        this.webSocketClient.disconnect();
+	    }
+
+	    // 演習IDを使って、専用の"秘境"への道を作る
+		// ★★★ IPアドレスは君の環境に合わせてくれよな！ "localhost" か "192.168..." の方だ！ ★★★
+	    String webSocketURL = "ws://192.168.18.171:8080/KIfU4/diagram/" + exerciseId;
+	    System.out.println("接続先URL: " + webSocketURL); // デバッグ用にコンソールに出力するぞ
+
+	    // 新しいWebSocketクライアントを作成し、接続を開始する
+	    this.webSocketClient = new WebSocketClient(this.drawerPanel);
+	    this.webSocketClient.connect(webSocketURL);
+
+	    // "監視塔"作戦をリセットして、新しい演習の監視を開始する
+	    this.lastCanvasUrl = ""; // 前回の状態をリセット
+	    if (this.syncTimer != null) {
+	    	this.syncTimer.cancel(); // 念のため一度止めてから
+	        this.syncTimer.scheduleRepeating(500); // タイマーを再開
+	    }
 	}
+
 
 	/*
 	 * 山崎追加
@@ -913,7 +942,7 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 				diffdialog.show();
 			}
 		});
-		
+
 	}
 
 //	private void scheduleFixedDelay_Yamazaki()
@@ -947,31 +976,31 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		// TODO 自動生成されたメソッド・スタブ
 		this.diff_button_.setText(stateCodeChange);
 	}
-	
-	
+
+
 	//座標を変えるためのデータを送る 実験群  saito
 	void layoutChange() {
 		SimServiceAsync async = (SimServiceAsync)GWT.create(SimService.class);
 		ServiceDefTarget entryPoint = (ServiceDefTarget) async;
 		String entryURL = GWT.getModuleBaseURL() + "urlToCompare";
 		entryPoint.setServiceEntryPoint(entryURL);
-			
+
 		@SuppressWarnings("rawtypes")
 		AsyncCallback< Map<String,Map<String,String>> > callback = new AsyncCallback< Map<String,Map<String,String>> >(){
 			@SuppressWarnings({ "unchecked", "deprecation" })
 				public void onFailure(Throwable caught){
 				System.out.println(caught);
 			}
-				
+
 			public void onSuccess(Map<String,Map<String,String>> simMap){
-					
+
 //				uMLCanvas.addSaitoSimMatch(simMap.get(MATCH));
 //				uMLCanvas.addSaitoSimMisMatch(simMap.get(MISMATCH));
 			}
 		};
 		async.urlToCompare(Session.studentId, Session.exerciseId, callback);
-	}	
-	
+	}
+
 	//座標を変えるためのデータを送る 統制群  saito
 			public void removeCanvas() {
 				SimServiceAsync async = (SimServiceAsync)GWT.create(SimService.class);
@@ -1002,8 +1031,8 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 					}
 				};
 				async.removeRelation(Session.studentId, Session.exerciseId, callback);
-			}	
-	
+			}
+
 	//一番新しいURLのキャンバスに書き換える saito
 	public void reloadCanvas() {
 		CanvasServiceAsync async = (CanvasServiceAsync)GWT.create(CanvasService.class);
@@ -1035,63 +1064,63 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		};
 
 		async.loadCanvas(Session.studentId, Session.exerciseId, callback);
-	}	
-	
-	
-	
+	}
+
+
+
 	//完全一致と完全不一致の要素のMapを受け取り、文字の色を変える saito
 	void colorChange() {
 		SimServiceAsync async = (SimServiceAsync)GWT.create(SimService.class);
 		ServiceDefTarget entryPoint = (ServiceDefTarget) async;
 		String entryURL = GWT.getModuleBaseURL() + "addColor";
 		entryPoint.setServiceEntryPoint(entryURL);
-			
+
 		@SuppressWarnings("rawtypes")
 		AsyncCallback< Map<String,Map<String,String>> > callback = new AsyncCallback< Map<String,Map<String,String>> >(){
 			@SuppressWarnings({ "unchecked", "deprecation" })
 				public void onFailure(Throwable caught){
 				System.out.println(caught);
 			}
-				
+
 			public void onSuccess(Map<String,Map<String,String>> simMap){
-					
+
 				uMLCanvas.addSaitoSimMatch(simMap.get(MATCH));
 				uMLCanvas.addSaitoSimMisMatch(simMap.get(MISMATCH));
 			}
 		};
 		async.addColor(Session.studentId, Session.exerciseId, callback);
-	}	
-	
-	
+	}
+
+
 	//現在エディターに存在するクラス図と正解例の類似度を取得する
 		void getSim() {
 			SimServiceAsync async = (SimServiceAsync)GWT.create(SimService.class);
 			ServiceDefTarget entryPoint = (ServiceDefTarget) async;
 			String entryURL = GWT.getModuleBaseURL() + "getSim";
 			entryPoint.setServiceEntryPoint(entryURL);
-				
+
 			@SuppressWarnings("rawtypes")
 			AsyncCallback<Double> callback = new AsyncCallback<Double>(){
 				@SuppressWarnings({ "unchecked", "deprecation" })
 					public void onFailure(Throwable caught){
 						System.out.println(caught);
 					}
-					
+
 				@Override
 					public void onSuccess(Double classDiagramSim){
 //						Window.alert("CDS:" + classDiagramSim / 2);
 						thisTimeSim = classDiagramSim / 2;
 					}
 
-					
+
 			};
 			async.getSim(Session.studentId, Session.exerciseId, callback);
-		}	
+		}
 
 	//この関数呼び出した後はlastTimeSim=thisTimeSimをする
 	//今回の類似度が前回の類似度よりも定数diffSim以上上がっていなければfalseを返す
 	boolean simCheck() {
-		
+
 		if(thisTimeSim == 0) {
 			return true;
 		}else if(thisTimeSim <= lastTimeSim) {
@@ -1103,11 +1132,11 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 			return false;
 		}
 	}
-	
+
 	public void timeCountStop(){
 			countTimer.cancel();
 	}
-	
+
 	/**********************************************************************/
 
 	private void getExercise(int exerciseId) {
@@ -1169,11 +1198,11 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 						Session.setMode("load");
 						Session.getActiveCanvas().fromURL( DEFAULT_MODEL , false);
 						uMLCanvas = Session.getActiveCanvas();
-						
+
 						String str = String.valueOf(Session.getActiveCanvas()); //saito
 						Window.alert(str);
 						GWT.log("str::"+str);
-						
+
 						Session.setMode("drawer");
 					}
 					else if(Session.exerciseId == 11){
