@@ -1324,7 +1324,7 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 	        @Override
 	        public void run() {
 	            isUpdating = false; // "更新中"の旗を下ろす
-	            syncTimer.scheduleRepeating(500); // 監視タイマーを再起動！
+	            syncTimer.scheduleRepeating(500); 
 	        }
 	    }.schedule(1000);
 	}
