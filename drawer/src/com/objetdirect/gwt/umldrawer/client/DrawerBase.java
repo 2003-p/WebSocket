@@ -828,7 +828,7 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		// WebSocketの初期化と接続
 		// URLの "war" の部分は、おまえがTomcatにデプロイするときの
 		// アプリケーション名（コンテキストパス）に合わせてくれ！
-		String webSocketURL = "ws://localhost:8080/KIfU4/diagram";
+		String webSocketURL = "ws://192.168.18.171:8080/KIfU4/diagram";
 		this.webSocketClient = new WebSocketClient(this.drawerPanel);
 		this.webSocketClient.connect(webSocketURL);
 		// onModuleLoad() の中に、このブロックを追加

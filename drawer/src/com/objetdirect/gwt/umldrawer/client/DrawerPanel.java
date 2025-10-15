@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -22,6 +23,7 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.objetdirect.gwt.umlapi.client.artifacts.ClassArtifact;
 import com.objetdirect.gwt.umlapi.client.artifacts.LifeLineArtifact;
 import com.objetdirect.gwt.umlapi.client.artifacts.ObjectArtifact;
+import com.objetdirect.gwt.umlapi.client.artifacts.UMLArtifact;
 import com.objetdirect.gwt.umlapi.client.engine.Direction;
 import com.objetdirect.gwt.umlapi.client.engine.GeometryManager;
 import com.objetdirect.gwt.umlapi.client.engine.Point;
@@ -36,6 +38,7 @@ import com.objetdirect.gwt.umlapi.client.helpers.ThemeManager.Theme;
 import com.objetdirect.gwt.umlapi.client.helpers.UMLCanvas;
 import com.objetdirect.gwt.umlapi.client.umlcomponents.UMLDiagram;
 import com.objetdirect.gwt.umlapi.client.umlcomponents.UMLDiagram.Type;
+import com.objetdirect.gwt.umldrawer.client.helpers.DiffMatchPatchGwt;
 
 public class DrawerPanel extends AbsolutePanel {
 
@@ -287,6 +290,33 @@ public class DrawerPanel extends AbsolutePanel {
 	public DrawerBase getDrawerBaseInstance() {
 		return this.drawerBase;
 	}
+	// DrawerPanel.java のクラスの一番最後に追加
+
+	/**
+	 * 指定されたIDの図形（アーティファクト）の、指定された部分のテキストを更新するメソッドだ。
+	 * @param elementId 更新対象の図形のID
+	 * @param partId 更新対象の部分を識別するID
+	 * @param newText 新しいテキスト
+	 */
+	public void updateArtifactText(String elementId, String partId, String newText) {
+	    try {
+	        int id = Integer.parseInt(elementId.substring("element-".length()));
+	        UMLArtifact artifact = UMLArtifact.getArtifactById(id);
+
+	        if (artifact != null) {
+	            // ClassArtifactのクラス名が変更された場合
+	            if (artifact instanceof ClassArtifact && partId.contains("ClassPartNameArtifact")) {
+	                ((ClassArtifact) artifact).getUMLClass().setName(newText);
+	            }
+	            // 他にも属性や操作名など、様々な部分の更新処理をここに追加していくことになる
+
+	            // 変更を画面に反映させるために、図形を再描画する
+	            artifact.rebuildGfxObject();
+	        }
+	    } catch (Exception e) {
+	        System.err.println("テキストの更新に失敗: " + e.getMessage());
+	    }
+	}
 	// --- 改造箇所ここまで ---
 
 	/**
@@ -428,5 +458,46 @@ public class DrawerPanel extends AbsolutePanel {
 
 	public void fromURL(String url, boolean isForPasting) {
 		this.uMLCanvas.fromURL(url, isForPasting);
+	}
+	// DrawerPanel.java のクラスの一番最後に追加
+
+	/**
+	 * テキスト変更のパッチ適用を"受け取った"という事実だけを使い、
+	 * 最終的にはCRDT（監視塔作戦）と同じ全体同期で画面を更新するメソッド。
+	 * これがクライアント側のライブラリ制限を回避する、最も確実な方法だ。
+	 */
+	// DrawerPanel.java の applyPatchToArtifactText メソッドをこれに置き換える
+
+	public void applyPatchToArtifactText(String elementId, String partId, String patchText) {
+	    try {
+	        int id = Integer.parseInt(elementId.substring("element-".length()));
+	        UMLArtifact artifact = UMLArtifact.getArtifactById(id);
+
+	        if (artifact != null) {
+	            String currentText = "";
+
+	            // --- どの部分のテキストを更新するか、ここで特定する！ ---
+	            if (artifact instanceof ClassArtifact && partId.contains("ClassPartNameArtifact")) {
+	                currentText = ((ClassArtifact) artifact).getUMLClass().getName();
+	            }
+	            // (今後、属性や操作のテキストを更新する場合は、ここにelse ifを追加していく)
+
+	            // --- JSNIの魔法陣を使って、パッチを適用する！ ---
+	            DiffMatchPatchGwt dmp = new DiffMatchPatchGwt();
+	            JavaScriptObject patches = dmp.patchFromText(patchText);
+	            String newText = dmp.patchApply(patches, currentText);
+	            // --- 魔法はここまで ---
+
+	            // --- 特定した部分のテキストを、新しいものに更新する！ ---
+	            if (artifact instanceof ClassArtifact && partId.contains("ClassPartNameArtifact")) {
+	                ((ClassArtifact) artifact).getUMLClass().setName(newText);
+	            }
+
+	            // 変更を画面に反映させるために、図形を再描画する
+	            artifact.rebuildGfxObject();
+	        }
+	    } catch (Exception e) {
+	        System.err.println("パッチの適用、またはテキストの更新に失敗: " + e.getMessage());
+	    }
 	}
 }

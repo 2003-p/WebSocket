@@ -16,7 +16,6 @@ package com.objetdirect.gwt.umlapi.client.editors;
 
 import java.util.logging.Logger;
 
-import com.allen_sauer.gwt.log.client.Log;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
@@ -60,6 +59,9 @@ public abstract class FieldEditor {
 	protected int					height		= 0;
 	protected boolean				isMultiLine;
 	protected int					minBoxWidth	= 40;
+	// --- ここから追加 ---
+	protected String originalText;
+	// --- 追加はここまで ---
 
 	/**
 	 * Constructor of the FieldEditor
@@ -106,6 +108,7 @@ public abstract class FieldEditor {
 		this.isMultiLine = isItMultiLine;
 		if (this.isMultiLine && (this.height == 0)) {
 			Logger.getGlobal().severe("Must set height for multiline editors");
+			this.originalText = text;
 		}
 
 		this.content = text;
@@ -169,6 +172,21 @@ public abstract class FieldEditor {
 	protected void validate(final boolean isNextable) {
 		boolean isStillNextable = isNextable;
 		final String newContent = FieldEditor.editField.getText();
+		// validate(boolean isNextable) メソッドの中に追加
+
+		// validate(boolean isNextable) メソッドの中の、前回追加した部分をこれに書き換える
+
+		if (this.originalText != null && !this.originalText.equals(newContent)) {
+		    String elementId = "element-" + this.artifact.getId();
+		    String partId = this.artifact.getClass().getName();
+
+		    // 編集前と編集後の両方のテキストを送る！
+		    String message = "{\"action\":\"textEditOT\", \"elementId\":\"" + elementId + "\", \"partId\":\"" + partId + "\", \"originalText\":\"" + this.originalText.replace("\"", "\\\"") + "\", \"newText\":\"" + newContent.replace("\"", "\\\"") + "\"}";
+
+		    if (UMLCanvas.webSocketSender != null) {
+		        UMLCanvas.webSocketSender.send(message);
+		    }
+		}
 		System.out.println("newContent="+newContent);
 		System.out.println("this.content="+this.content);
 //		if (!newContent.equals(this.content)) {

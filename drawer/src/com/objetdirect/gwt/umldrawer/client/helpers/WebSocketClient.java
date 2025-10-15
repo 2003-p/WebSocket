@@ -65,6 +65,27 @@ public class WebSocketClient {
                          drawerPanel.getDrawerBaseInstance() .syncCanvasFromServer(url);
                     }
                 }
+                else if ("textUpdate".equals(action)) {
+                    // "textUpdate"の荷物が届いたら、中身を取り出す
+                    String elementId = jsonObject.get("elementId").isString().stringValue();
+                    String partId = jsonObject.get("partId").isString().stringValue();
+                    String newText = jsonObject.get("newText").isString().stringValue();
+
+                    // DrawerPanelに、テキストを更新する新しい命令を出す！
+                    if (drawerPanel != null) {
+                        drawerPanel.updateArtifactText(elementId, partId, newText);
+                    }
+                }
+                else if ("applyPatch".equals(action)) {
+                    String elementId = jsonObject.get("elementId").isString().stringValue();
+                    String partId = jsonObject.get("partId").isString().stringValue();
+                    String patchText = jsonObject.get("patch").isString().stringValue();
+
+                    if (drawerPanel != null) {
+                        // DrawerPanelに、パッチを適用する新しい命令を出す！
+                        drawerPanel.applyPatchToArtifactText(elementId, partId, patchText);
+                    }
+                }
             }
         } catch (Exception e) {
             System.err.println("受信したメッセージの解析に失敗: " + message);

@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/HikariCP-java72.4.13.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-api-1.7.36.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/slf4j-simple-1.7.36.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/diff-match-patch-1.1.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
