@@ -22,7 +22,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.logging.Logger;
+import java.util.logging.Logger;//... (他のimport文)
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Event;
@@ -1741,18 +1741,7 @@ public class UMLCanvas extends AbsolutePanel {
 									selectedArtifact.getLocation().getY() + direction.getYShift()));
 
 							selectedArtifact.rebuildGfxObject();
-							if (UMLCanvas.webSocketSender != null) {
-							    String elementId = "element-" + selectedArtifact.getId();
-							    int newX = selectedArtifact.getLocation().getX();
-							    int newY = selectedArtifact.getLocation().getY();
-							    String message = "{\"action\":\"move\", \"elementId\":\"" + elementId + "\", \"x\":" + newX + ", \"y\":" + newY + "}";
-							    UMLCanvas.webSocketSender.send(message);
-							}
-							// dropメソッドの中のforループに追加
-
-							// --- ここから追加 ---
 							
-							// --- ここまで追加 ---// ← これを何とかすれば赤のままになる ならなかった
 						}
 					};
 				}
@@ -1993,23 +1982,31 @@ public class UMLCanvas extends AbsolutePanel {
 		for (final UMLArtifact selectedArtifact : UMLCanvas.this.selectedArtifacts.keySet()) {
 			if (selectedArtifact.isDraggable()) {
 				placeFlag=true;
-				Point oldPoint = selectedArtifact.getLocation();
+				final Point oldPoint = selectedArtifact.getLocation();
 				selectedArtifact.moveTo(Point.substract(Point.add(selectedArtifact.getLocation(), this.totalDragShift), this.duringDragOffset));
 
 				selectedArtifact.rebuildGfxObject();
+				final UMLArtifact finalArtifact = selectedArtifact; // 遅延実行用に final 変数にする
+				com.google.gwt.core.client.Scheduler.get().scheduleDeferred(new com.google.gwt.core.client.Scheduler.ScheduledCommand() {
+					@Override
+					public void execute() {
+						MyLoggerExecute.registEditEvent(-1, finalArtifact.toString(), "Place",
+								finalArtifact.getClass().getName(), finalArtifact.getId(), null, -1, -1,
+								null, oldPoint.getX()+","+oldPoint.getY(), finalArtifact.getLocation().getX()+","+finalArtifact.getLocation().getY(), null, UMLArtifact.getIdCount());
+					}
+				});
+				if (UMLCanvas.webSocketSender != null) { 
+				    String elementId = "element-" + selectedArtifact.getId();
+				    int newX = selectedArtifact.getLocation().getX();
+				    int newY = selectedArtifact.getLocation().getY();
+				    String studentId = Session.studentId; 
+				    final String message = "{\"action\":\"move\", \"studentId\":\"" + studentId + "\", \"elementId\":\"" + elementId + "\", \"x\":" + newX + ", \"y\":" + newY + "}";
+				    
+				    // ★ Scheduler を削除し、直接送信する
+				    UMLCanvas.webSocketSender.send(message); 
+				}
 
 
-				//TODO dropEvent
-				//writeLog(selectedArtifact);
-				//MyLogger.operationLog("DropArtifact"+":"+selectedArtifact.toURL());
-				System.out.println("DropArtifact"+":"+selectedArtifact.toString());
-				MyLoggerExecute.registEditEvent(-1, selectedArtifact.toString(), "Place",
-						selectedArtifact.getClass().getName(), selectedArtifact.getId(), null, -1, -1,
-						null, oldPoint.getX()+","+oldPoint.getY(), selectedArtifact.getLocation().getX()+","+selectedArtifact.getLocation().getY(), null, UMLArtifact.getIdCount());
-
-//				int preEventId, String editEvent, String eventType,
-//				String targetType, int targetId, String linkKind, int rightObjectId, int leftObjectId,
-//				String targetPart, String beforeEdit, String afterEdit, String canvasUrl
 			}
 		}
 		this.totalDragShift = Point.getOrigin();
@@ -2018,9 +2015,14 @@ public class UMLCanvas extends AbsolutePanel {
 		GfxManager.getPlatform().clearVirtualGroup(this.movingOutlineDependencies);
 
 		if(placeFlag){
-			MyLoggerExecute.registEditEvent(-1, "PlaceArtifacts", "Place",
-					null, -1, null, -1, -1,
-					null, null, null, this.toUrl(), UMLArtifact.getIdCount());
+			com.google.gwt.core.client.Scheduler.get().scheduleDeferred(new com.google.gwt.core.client.Scheduler.ScheduledCommand() {
+				@Override
+				public void execute() {
+					MyLoggerExecute.registEditEvent(-1, "PlaceArtifacts", "Place",
+							null, -1, null, -1, -1,
+							null, null, null, UMLCanvas.this.toUrl(), UMLArtifact.getIdCount());
+				}
+			});
 		}
 		//TODO takafumi
 		System.out.println(this.toString());
@@ -2032,6 +2034,12 @@ public class UMLCanvas extends AbsolutePanel {
 //		String targetPart, String beforeEdit, String afterEdit, String canvasUrl
 
 	}
+
+	/**
+	 * WebSocket (DrawerPanel) からの "editText" 操作をキャンバスに反映する
+	 * (修正Cで追加するメソッド)
+	 */
+	
 
 	private void dropRightMenu(final GfxObject gfxObject, final Point location) {
 		this.doSelection(gfxObject, false, false);

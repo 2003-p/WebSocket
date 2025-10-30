@@ -172,6 +172,33 @@ public abstract class FieldEditor {
 	protected void validate(final boolean isNextable) {
 		boolean isStillNextable = isNextable;
 		final String newContent = FieldEditor.editField.getText();
+		// validateメソッドの中に追加
+
+		// --- ここからが Op-CRDT の送信処理だ！ ---
+		// (originalTextフィールドがまだなければ、クラスの先頭に追加する)
+		// protected String originalText;
+		// (startEditionメソッドの最後に this.originalText = text; を追加する)
+
+		// もしテキストが本当に変更されていたら
+		// validateメソッド内の if (this.originalText != null ... ) { ... } ブロックを修正
+
+		if (this.originalText != null && !this.originalText.equals(newContent)) {
+		    String elementId = "element-" + this.artifact.getId();
+		    String partId = this.artifact.getClass().getName();
+		    // ▼▼▼ "studentId" をJSONに追加 ▼▼▼
+		    String studentId = Session.studentId; // SessionからIDを取得
+		    String message = "{\"action\":\"editText\", \"studentId\":\"" + studentId + "\", \"elementId\":\"" + elementId + "\", \"partId\":\"" + partId + "\", \"newText\":\"" + newContent.replace("\"", "\\\"") + "\"}";
+		    // ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
+		    if (UMLCanvas.webSocketSender != null) {
+		    	com.google.gwt.core.client.Scheduler.get().scheduleDeferred(new com.google.gwt.core.client.Scheduler.ScheduledCommand() {
+		            @Override
+		            public void execute() {
+		                UMLCanvas.webSocketSender.send(message);
+		            }
+		        });
+		    }
+		}
+		// --- 追加はここまで ---
 		// validate(boolean isNextable) メソッドの中に追加
 
 		// validate(boolean isNextable) メソッドの中の、前回追加した部分をこれに書き換える
@@ -179,12 +206,9 @@ public abstract class FieldEditor {
 		if (this.originalText != null && !this.originalText.equals(newContent)) {
 		    String elementId = "element-" + this.artifact.getId();
 		    String partId = this.artifact.getClass().getName();
-
-		    // 編集前と編集後の両方のテキストを送る！
-		    String message = "{\"action\":\"textEditOT\", \"elementId\":\"" + elementId + "\", \"partId\":\"" + partId + "\", \"originalText\":\"" + this.originalText.replace("\"", "\\\"") + "\", \"newText\":\"" + newContent.replace("\"", "\\\"") + "\"}";
-
+		    final String message = "{\"action\":\"editText\", \"elementId\":\"" + elementId + "\", \"partId\":\"" + partId + "\", \"newText\":\"" + newContent.replace("\"", "\\\"") + "\"}";
 		    if (UMLCanvas.webSocketSender != null) {
-		        UMLCanvas.webSocketSender.send(message);
+		    	UMLCanvas.webSocketSender.send(message);
 		    }
 		}
 		System.out.println("newContent="+newContent);

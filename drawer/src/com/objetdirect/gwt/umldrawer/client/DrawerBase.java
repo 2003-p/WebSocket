@@ -56,9 +56,8 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 	private DrawerPanel drawerPanel;
 
 	private WebSocketClient webSocketClient;
-	private Timer syncTimer;
-	private String lastCanvasUrl = "";
-	private boolean isUpdating = false;
+	// private String lastCanvasUrl = ""; // "監視塔"作戦のコードを削除
+	private boolean isUpdating = false; // 操作ベースの無限ループ防止に必要
 	private SingleSelectionModel<String> selectionModel	= new SingleSelectionModel<String>();
 
 	private EditEventPanel editEventPanel;
@@ -832,29 +831,6 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 		// 演習IDを使ってWebSocketに接続するメソッドを呼び出す！
 		connectToExerciseChannel(String.valueOf(Session.exerciseId));
 
-		// 監視タイマーをセットアップするぞ！
-		this.syncTimer = new Timer() {
-		    @Override
-		    public void run() {
-		        // もし他の人からの更新を反映している最中じゃなければ、監視を実行する
-		        if (!isUpdating && Session.getActiveCanvas() != null) {
-		            String currentUrl = Session.getActiveCanvas().toUrl();
-		            // 前回の状態と比べて、変化があったか？
-		            if (!currentUrl.equals(lastCanvasUrl)) {
-		                // 変化があったら、その情報を"荷物"として全員に送る！
-		                String message = "{\"action\":\"sync\", \"url\":\"" + currentUrl + "\"}";
-		                if(webSocketClient != null){
-		                	webSocketClient.send(message);
-		                }
-		                // 今の状態を記憶しておく
-		                lastCanvasUrl = currentUrl;
-		            }
-		        }
-		    }
-		};
-		// 0.5秒ごとに"監視"を実行するんだ！
-		this.syncTimer.scheduleRepeating(500);
-
 		// UMLCanvasが持つ"契約者"の宝箱に、我こそが契約者だと名乗り出る！
 		UMLCanvas.webSocketSender = new WebSocketSender() {
 		    @Override
@@ -902,11 +878,11 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 	    this.webSocketClient.connect(webSocketURL);
 
 	    // "監視塔"作戦をリセットして、新しい演習の監視を開始する
-	    this.lastCanvasUrl = ""; // 前回の状態をリセット
-	    if (this.syncTimer != null) {
-	    	this.syncTimer.cancel(); // 念のため一度止めてから
-	        this.syncTimer.scheduleRepeating(500); // タイマーを再開
-	    }
+	    // this.lastCanvasUrl = ""; // "監視塔"作戦のコードを削除
+	    // if (this.syncTimer != null) { // "監視塔"作戦のコードを削除
+	    // 	this.syncTimer.cancel(); // 念のため一度止めてから // "監視塔"作戦のコードを削除
+	    //     this.syncTimer.scheduleRepeating(500); // タイマーを再開 // "監視塔"作戦のコードを削除
+	    // } // "監視塔"作戦のコードを削除
 	}
 
 
@@ -1301,31 +1277,29 @@ public class DrawerBase extends DockPanel implements IDrawerBaseConectThread{
 	public WebSocketClient getWebSocketClient() {
 	    return this.webSocketClient;
 	}
-	// DrawerBase.java のクラスの一番最後に追加
+	// src/com/objetdirect/gwt/umldrawer/client/DrawerBase.java に追加
 
-	/**
-	 * 他の冒険者から"世界の更新情報"が届いた時に呼び出される呪文だ！
-	 */
-	public void syncCanvasFromServer(String url) {
-	    // 更新がループしないように、一時的に"更新中"の旗を立てる
-	    isUpdating = true;
-	    // 監視タイマーも一旦止める！
-	    syncTimer.cancel();
+		/**
+		 * DrawerPanel が UMLCanvas を参照するための「窓口」
+		 * @return uMLCanvas
+		 */
+		public UMLCanvas getUMLCanvas() {
+		    return this.uMLCanvas;
+		}
 
-	    if (Session.getActiveCanvas() != null) {
-	        Session.getActiveCanvas().clearCanvas();
-	        Session.getActiveCanvas().fromURL(url, false);
-	        // 自分の世界の状態も、受け取った最新の状態に更新しておく
-	        lastCanvasUrl = url;
-	    }
+		/**
+		 * DrawerPanel が再描画を指示するための「窓口」
+		 */
 
-	    // 1秒後に、再び"監視"を再開するためのタイマーをセットする
-	    new Timer() {
-	        @Override
-	        public void run() {
-	            isUpdating = false; // "更新中"の旗を下ろす
-	            syncTimer.scheduleRepeating(500); 
-	        }
-	    }.schedule(1000);
+		/**
+		 * @return webSocketClient
+		 */
+	// ... (既存の getWebSocketClient() メソッド)
+	public boolean isUpdating() {
+		return this.isUpdating;
+	}
+
+	public void setUpdating(boolean isUpdating) {
+		this.isUpdating = isUpdating;
 	}
 }

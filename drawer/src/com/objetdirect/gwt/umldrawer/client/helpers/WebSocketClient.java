@@ -4,8 +4,8 @@ import com.google.gwt.core.client.JavaScriptObject;
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
 import com.google.gwt.json.client.JSONValue;
+import com.objetdirect.gwt.umlapi.client.helpers.Session;
 import com.objetdirect.gwt.umldrawer.client.DrawerPanel;
-
 
 public class WebSocketClient {
 
@@ -56,45 +56,54 @@ public class WebSocketClient {
     }-*/;
  // WebSocketClient.java の onMessage メソッドをこれに置き換える
 
+ // WebSocketClient.java の onMessage メソッドをこれに置き換える
+ // ▼▼▼ onMessage メソッド全体を、この正しいコードに置き換える ▼▼▼
+
     public void onMessage(String message) {
         try {
             JSONValue jsonValue = JSONParser.parseStrict(message);
             JSONObject jsonObject = jsonValue.isObject();
 
             if (jsonObject != null && jsonObject.containsKey("action")) {
+
+                // --- 1. 送信者IDのチェック ---
+                // メッセージに "studentId" が含まれているか確認
+                if (!jsonObject.containsKey("studentId")) {
+                    return; // studentId がないメッセージは処理しない
+                }
+                String messageStudentId = jsonObject.get("studentId").isString().stringValue();
+                
+                // ★★★ 解決策：自分のID (Session.studentId) と比較 ★★★
+                if (messageStudentId.equals(Session.studentId)) {
+                    // 自分自身が送信したメッセージなので、何もしないで終了
+                    // (ローカルでの変更は 'drop' 時に既に行われているため)
+                    return; 
+                }
+
+                // --- 2. 他人からのメッセージのみ処理 ---
                 String action = jsonObject.get("action").isString().stringValue();
 
-                if ("sync".equals(action)) {
-                    String url = jsonObject.get("url").isString().stringValue();
-                    // DrawerPanelからDrawerBaseへの参照を取得し、syncCanvasFromServerを呼び出す！
-                    if (drawerPanel != null && drawerPanel.getDrawerBaseInstance()  != null) {
-                         drawerPanel.getDrawerBaseInstance() .syncCanvasFromServer(url);
-                    }
-                }
-                else if ("textUpdate".equals(action)) {
-                    // "textUpdate"の荷物が届いたら、中身を取り出す
+                if ("move".equals(action)) {
                     String elementId = jsonObject.get("elementId").isString().stringValue();
-                    String partId = jsonObject.get("partId").isString().stringValue();
-                    String newText = jsonObject.get("newText").isString().stringValue();
-
-                    // DrawerPanelに、テキストを更新する新しい命令を出す！
-                    if (drawerPanel != null) {
-                        drawerPanel.updateArtifactText(elementId, partId, newText);
-                    }
-                }
-                else if ("applyPatch".equals(action)) {
-                    String elementId = jsonObject.get("elementId").isString().stringValue();
-                    String partId = jsonObject.get("partId").isString().stringValue();
-                    String patchText = jsonObject.get("patch").isString().stringValue();
+                    int x = (int) jsonObject.get("x").isNumber().doubleValue();
+                    int y = (int) jsonObject.get("y").isNumber().doubleValue();
 
                     if (drawerPanel != null) {
-                        // DrawerPanelに、パッチを適用する新しい命令を出す！
-                        drawerPanel.applyPatchToArtifactText(elementId, partId, patchText);
+                        drawerPanel.moveArtifactById(elementId, x, y);
+                    }
+
+                } else if ("editText".equals(action)) {
+                    String elementId = jsonObject.get("elementId").isString().stringValue();
+                    String partId = jsonObject.get("partId").isString().stringValue();
+                    String newText = jsonObject.get("newText").isString().stringValue(); 
+                    
+                    if (drawerPanel != null) {
+                        drawerPanel.applyPatchToArtifactText(elementId, partId, newText);
                     }
                 }
             }
         } catch (Exception e) {
-            System.err.println("受信したメッセージの解析に失敗: " + message);
+            System.err.println("WebSocket onMessage Error: " + e.getMessage());
         }
     }
 }
